@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <conio.h>
 
 using namespace std;
 
@@ -29,6 +30,18 @@ public:
 
     int getRoll() {
         return roll;
+    }
+
+    int getScience() {
+        return science;
+    }
+
+    int getEnglish() {
+        return english;
+    }
+
+    int getMaths() {
+        return maths;
     }
 
     int totalMarks() {
@@ -87,6 +100,216 @@ void MarkSheet::update()
     cout << endl << endl;
 }
 
+int operation(string input)
+{
+    /*
+    ==, >, >=, <, <=, !=, &&, ||
+
+    ==      =1
+    >       =2
+    >=      =3
+    <       =4
+    <=      =5
+    !=      =6
+    &&      =7
+    ||      =8
+    invalid =9
+    */
+
+    if ( input == "==" )
+    {
+        return 1;
+    }
+
+    else if ( input == ">" )
+    {
+        return 2;
+    }
+
+    else if ( input == ">=" )
+    {
+        return 3;
+    }
+
+    else if ( input == "<" )
+    {
+        return 4;
+    }
+
+    else if ( input == "<=" )
+    {
+        return 5;
+    }
+
+    else if ( input == "!=" )
+    {
+        return 6;
+    }
+
+    else if ( input == "&&" )
+    {
+        return 7;
+    }
+
+    else if ( input == "||" )
+    {
+        return 8;
+    }
+    else
+    {
+        return 9;
+    }
+}
+
+void viewCase(int op, int x, MarkSheet m[], int c)
+{
+    /*
+    for c:
+        1 = roll number
+        2 = science
+        3 = english
+        4 = maths
+        5 = total
+    */
+
+    int i, m1[20], temp = 0;
+
+    if(c == 1)
+    {
+        for(i=0 ; i<20 ; i++)
+        {
+            m1[i] = m[i].getRoll();
+        }
+    }
+    else if(c == 2)
+    {
+        for(i=0 ; i<20 ; i++)
+        {
+            m1[i] = m[i].getScience();
+        }
+    }
+    else if(c == 3)
+    {
+        for(i=0 ; i<20 ; i++)
+        {
+            m1[i] = m[i].getEnglish();
+        }
+    }
+    else if(c == 4)
+    {
+        for(i=0 ; i<20 ; i++)
+        {
+            m1[i] = m[i].getMaths();
+        }
+    }
+    else if(c == 5)
+    {
+        for(i=0 ; i<20 ; i++)
+        {
+            m1[i] = m[i].totalMarks();
+        }
+    }
+
+    // ==
+    if(op == 1)
+    {
+        for(i=0 ; i<20 ; i++) {
+            if(m1[i] == x) {
+                m[i].view();
+                break;
+            }
+        }
+
+        if (i > 19)
+            cout << "\nInvalid roll number!!! No entries available." << endl << endl;
+    }
+
+    // >
+    else if(op == 2)
+    {
+        temp = 0;
+        for(i=0 ; i<20 ; i++) {
+            if(m1[i] > x) {
+                m[i].view();
+                temp--;
+            }
+            temp++;
+        }
+
+        if (temp > 19)
+            cout << "\nInvalid roll number!!! No entries available." << endl << endl;
+    }
+
+    // >=
+    else if(op == 3)
+    {
+        temp = 0;
+        for(i=0 ; i<20 ; i++) {
+            if(m1[i] >= x) {
+                m[i].view();
+                temp--;
+            }
+            temp++;
+        }
+
+        if (temp > 19)
+            cout << "\nInvalid roll number!!! No entries available." << endl << endl;
+    }
+
+    // <
+    else if(op == 4)
+    {
+        temp = 0;
+        for(i=0 ; i<20 ; i++) {
+            if(m1[i] < x && m1[i] != 0) {
+                m[i].view();
+                temp--;
+            }
+            temp++;
+        }
+
+        if (temp > 19)
+            cout << "\nInvalid roll number!!! No entries available." << endl << endl;
+    }
+
+    // <=
+    else if(op == 5)
+    {
+        temp = 0;
+        for(i=0 ; i<20 ; i++) {
+            if(m1[i] <= x && m1[i] != 0) {
+                m[i].view();
+                temp--;
+            }
+            temp++;
+        }
+
+        if (temp > 19)
+            cout << "\nInvalid roll number!!! No entries available." << endl << endl;
+    }
+
+    // !=
+    else if(op == 6)
+    {
+        temp = 0;
+        for(i=0 ; i<20 ; i++) {
+            if(m1[i] != x && m1[i] != 0) {
+                m[i].view();
+                temp--;
+            }
+            temp++;
+        }
+
+        if (temp > 19)
+            cout << "\nInvalid roll number!!! No entries available." << endl << endl;
+    }
+
+    else
+    {
+        cout << "Invalid Operator... Displaying all entries" << endl;
+    }
+}
+
 int main()
 {
     int i;
@@ -132,8 +355,9 @@ int main()
 
         //View
         case 2:
-            cout << "You want to view 1. All, or with a specific 2. Roll number: ";
-            int x;
+            {
+            cout << "You want to view 1. All, or with a 2. Specificity: ";
+            int x,y;
             cin >> x;
             switch(x)
             {
@@ -144,22 +368,105 @@ int main()
                 }
                 break;
             case 2:
-                cout << "Roll number: ";
-                cin >> rno;
-                for(i=0 ; i<20 ; i++) {
-                    if(m[i].getRoll() == rno) {
-                        m[i].view();
-                        break;
-                    }
+                {
+                string op; // operator
+                int sm, em, mm, tm; // all marks
+                int op1; // operator's integer value
+                cout << endl << "1. Roll number \n2. Science marks \n3. English marks \n4. Maths marks \n5. Total Marks" ;
+                cout << endl << "Choose your option: ";
+                cin >> y;
+                cout << endl << endl;
+                switch(y)
+                {
+                /*
+                for c:
+                    1 = roll number
+                    2 = science
+                    3 = english
+                    4 = maths
+                    5 = total
+
+                for op1:
+                    ==, >, >=, <, <=, !=, &&, ||
+
+                    ==      =1
+                    >       =2
+                    >=      =3
+                    <       =4
+                    <=      =5
+                    !=      =6
+                    invalid =9
+                */
+
+                // roll number
+                case 1:
+                    cout << "E.g.: > 10 \t{separated by a [space]} \nOperators you can input: {==, >, >=, <, <=, !=} " << endl;
+                    cout << "\n\nInput your query for roll number : ";
+                    cin.ignore(100, '\n');
+                    cin >> op;
+                    op1 = operation(op);
+                    cin >> rno;
+                    viewCase(op1, rno, m, 1);
+                    break;
+
+                // science marks
+                case 2:
+                    cout << "E.g.: > 10 \t{separated by a [space]} \nOperators you can input: {==, >, >=, <, <=, !=} " << endl;
+                    cout << "\n\nInput your query for science marks : ";
+                    cin.ignore(100, '\n');
+                    cin >> op;
+                    op1 = operation(op);
+                    cin >> sm;
+                    viewCase(op1, sm, m, 2);
+                    break;
+
+                // english marks
+                case 3:
+                    cout << "E.g.: > 10 \t{separated by a [space]} \nOperators you can input: {==, >, >=, <, <=, !=} " << endl;
+                    cout << "\n\nInput your query for english marks : ";
+                    cin.ignore(100, '\n');
+                    cin >> op;
+                    op1 = operation(op);
+                    cin >> em;
+                    viewCase(op1, em, m, 3);
+                    break;
+
+                // maths marks
+                case 4:
+                    cout << "E.g.: > 10 \t{separated by a [space]} \nOperators you can input: {==, >, >=, <, <=, !=} " << endl;
+                    cout << "\n\nInput your query for maths marks : ";
+                    cin.ignore(100, '\n');
+                    cin >> op;
+                    op1 = operation(op);
+                    cin >> mm;
+                    viewCase(op1, mm, m, 4);
+                    break;
+
+                // total marks
+                case 5:
+                    cout << "E.g.: > 10 \t{separated by a [space]} \nOperators you can input: {==, >, >=, <, <=, !=} " << endl;
+                    cout << "\n\nInput your query for total marks : ";
+                    cin.ignore(100, '\n');
+                    cin >> op;
+                    op1 = operation(op);
+                    cin >> tm;
+                    viewCase(op1, tm, m, 5);
+                    break;
+
+                default:
+                    cout << "Invalid choice.";
+                    break;
                 }
-                if (i > 19)
-                    cout << "Invalid roll number!!!" << endl << endl;
                 break;
+                }
+
             default:
                 cout << "Invalid choice.";
                 break;
             }
             break;
+            }
+
 
         //Delete
         case 3:
@@ -202,6 +509,9 @@ int main()
             break;
         }
     }while(choice != 5);
+
+    cout << "Thank you for using the system!" << endl;
+    getch();
 
     return 0;
 }
